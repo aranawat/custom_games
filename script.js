@@ -155,6 +155,7 @@ function buildKeyboard() {
 }
 
 function handleKeyPress(key) {
+    if (isAnimating) return; // 🔏 Blocks keys from registering mid-animation
     if (currentAttempt >= maxAttempts) return;
 
     if (key === "DELETE") {
@@ -189,33 +190,36 @@ function triggerRowShake() {
     setTimeout(() => row.classList.remove("shake"), 500);
 }
 
-// ASYNCHRONOUS CHECK: Verifies guess with the API before allowing the turn
+// Global lock variable to prevent typing while animation plays
+let isAnimating = false;
+
 async function checkWordleRow() {
+    if (isAnimating) return; // Prevent double submissions
+    
     const rowWords = wordleGrid[currentAttempt].join("").toLowerCase();
     
-    // Always bypass check for your secret word so custom values/nicknames work safely
+    // 1. Live Dictionary Validation check
     if (rowWords !== SECRET_WORD.toLowerCase()) {
         try {
-            // Hit the Free Dictionary API using your requested path syntax
             const response = await fetch(`https://dictionaryapi.dev{rowWords}`);
-            
-            // If response is NOT ok (like a 404), the word is invalid
             if (!response.ok) {
                 showToast("Not in word list");
                 triggerRowShake();
-                return; // Blocks execution completely
+                return; 
             }
         } catch (error) {
-            // Safety measure: if network drops out, allow play to prevent crashing
             console.warn("Dictionary API offline. Bypassing check.", error);
         }
     }
 
-    // Process tile reveal animations if the dictionary check passes
+    // Lock board input during the reveal sequence
+    isAnimating = true;
+
     const secretArr = SECRET_WORD.toUpperCase().split("");
     const guessArr = rowWords.toUpperCase().split("");
-    let revealDelay = 300;
+    let revealDelay = 300; 
 
+    // 2. Trigger individual tile flip transitions sequentially
     for (let i = 0; i < 5; i++) {
         const cell = document.getElementById(`cell-${currentAttempt}-${i}`);
         const letter = guessArr[i];
@@ -237,20 +241,26 @@ async function checkWordleRow() {
         }, i * revealDelay);
     }
 
-    // Wait until the animations finish before declaring a win/loss state
+    // 3. CRITICAL FIX: Only advance game state AFTER the 5th tile finishes flipping
     setTimeout(() => {
         if (rowWords.toUpperCase() === SECRET_WORD.toUpperCase()) {
             showToast("🎉 Spectacular!");
+            // Set attempt to max to freeze input on win
             currentAttempt = maxAttempts; 
+            isAnimating = false;
         } else {
-            currentAttempt++;
-            currentLetter = 0;
+            // Move down by exactly ONE row increment cleanly
+            currentAttempt++; 
+            currentLetter = 0; 
+            isAnimating = false; // Unlock input for the next row
+            
             if (currentAttempt === maxAttempts) {
                 showToast(`Game Over! Word was: ${SECRET_WORD.toUpperCase()}`);
             }
         }
-    }, 5 * revealDelay + 200);
+    }, (4 * revealDelay) + 500); // Dynamic timer coordinates perfectly with CSS animations
 }
+
 
 function updateKeyboardKeyColor(letter, targetStatus) {
     const keyElement = document.getElementById(`key-${letter}`);
