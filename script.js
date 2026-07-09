@@ -53,20 +53,31 @@ function initConnections() {
 }
 
 function renderGrid() {
-    // CRITICAL FIX: Completely wipe out old HTML data before rebuilding the layout
+    // Completely wipe old HTML data before rebuilding layout
     gridElement.innerHTML = "";
     
-    // 1. Create a dedicated container for banners if any exist
+    // Create dedicated full-width banners for solved groups
     solvedCategories.forEach(catIndex => {
         const cat = categories[catIndex];
         const banner = document.createElement("div");
         banner.className = `card solved-${catIndex}`;
+        
+        // BULLETPROOF MOBILE INLINE STYLING OVERRIDE:
         banner.style.gridColumn = "span 4";
+        banner.style.display = "flex";
+        banner.style.flexDirection = "column";
+        banner.style.justifyContent = "center";
+        banner.style.alignItems = "center";
+        banner.style.textAlign = "center";
+        banner.style.width = "100%";
+        banner.style.boxSizing = "border-box";
+        banner.style.padding = "15px 10px";
+        
         banner.innerHTML = `<strong>${cat.desc}</strong><br>${cat.words.join(", ")}`;
         gridElement.appendChild(banner);
     });
 
-    // 2. Safely render only the remaining unsolved cards
+    // Safely render only remaining unsolved cards
     allWords.forEach(wordObj => {
         const card = document.createElement("div");
         card.className = "card";
