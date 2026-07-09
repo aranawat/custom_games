@@ -72,6 +72,17 @@ body {
 .card.solved-1 { background-color: #a0c35a; color: black; animation: popIn 0.4s ease; }
 .card.solved-2 { background-color: #b0c4ef; color: black; animation: popIn 0.4s ease; }
 .card.solved-3 { background-color: #ba79b1; color: white; animation: popIn 0.4s ease; }
+/* Forces text to align and justify perfectly to the center when a row is solved */
+.card[style*="grid-column: span 4"] {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 15px 10px; /* Gives a bit more breathing room on mobile */
+    box-sizing: border-box;
+}
+
 .controls { display: flex; justify-content: space-between; align-items: center; }
 
 /* WORDLE BOARD & ANIMATIONS */

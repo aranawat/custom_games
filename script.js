@@ -53,7 +53,10 @@ function initConnections() {
 }
 
 function renderGrid() {
+    // CRITICAL FIX: Completely wipe out old HTML data before rebuilding the layout
     gridElement.innerHTML = "";
+    
+    // 1. Create a dedicated container for banners if any exist
     solvedCategories.forEach(catIndex => {
         const cat = categories[catIndex];
         const banner = document.createElement("div");
@@ -63,15 +66,19 @@ function renderGrid() {
         gridElement.appendChild(banner);
     });
 
+    // 2. Safely render only the remaining unsolved cards
     allWords.forEach(wordObj => {
         const card = document.createElement("div");
         card.className = "card";
         card.innerText = wordObj.text;
+        
         if (selectedWords.includes(wordObj)) card.classList.add("selected");
+        
         card.addEventListener("click", () => selectWord(wordObj));
         gridElement.appendChild(card);
     });
 }
+
 
 function selectWord(wordObj) {
     if (selectedWords.includes(wordObj)) {
@@ -108,7 +115,6 @@ submitBtn.onclick = () => {
     submitBtn.disabled = true;
     renderGrid();
 };
-
 
 // ==========================================
 // 🟩 WORDLE LOGIC (LIVE DICTIONARY API LOOKUP)
