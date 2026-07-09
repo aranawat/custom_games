@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Game Bundle 🎁</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 1. HOME MENU -->
+    <div id="menu-screen" class="game-container">
+        <h1>Pick a Game! 🎁</h1>
+        <p>A special custom gift just for you.</p>
+        <div class="menu-buttons">
+            <button onclick="switchScreen('connections-screen')">Play Connections</button>
+            <button onclick="switchScreen('wordle-screen')">Play Wordle</button>
+        </div>
+    </div>
+
+    <!-- 2. CONNECTIONS GAME -->
+    <div id="connections-screen" class="game-container hidden">
+        <button class="back-btn" onclick="switchScreen('menu-screen')">← Menu</button>
+        <h1>Custom Connections</h1>
+        <p>Find groups of four related items!</p>
+        <div id="grid" class="grid"></div>
+        <div class="controls">
+            <span id="mistakes">Mistakes remaining: ••••</span>
+            <button id="submit-btn" disabled>Submit</button>
+        </div>
+    </div>
+
+    <!-- 3. WORDLE GAME -->
+    <div id="wordle-screen" class="game-container hidden">
+        <button class="back-btn" onclick="switchScreen('menu-screen')">← Menu</button>
+        <h1>Custom Wordle</h1>
+        <p>Guess the secret 5-letter word!</p>
+        <div id="wordle-board" class="wordle-board"></div>
+        <div id="keyboard" class="keyboard"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
