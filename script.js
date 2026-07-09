@@ -85,7 +85,11 @@ function selectWord(wordObj) {
 
 submitBtn.onclick = () => {
     if (selectedWords.length !== 4) return;
-    const firstCat = selectedWords[0].catIndex;
+    
+    // CRITICAL FIX: Grab the category index from the FIRST item inside the guess array
+    const firstCat = selectedWords[0].catIndex; 
+    
+    // Check if EVERY selected card matches that same category index
     const isCorrect = selectedWords.every(w => w.catIndex === firstCat);
 
     if (isCorrect) {
@@ -104,6 +108,7 @@ submitBtn.onclick = () => {
     submitBtn.disabled = true;
     renderGrid();
 };
+
 
 // ==========================================
 // 🟩 WORDLE LOGIC (LIVE DICTIONARY API LOOKUP)
