@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Custom Game Bundle 🎁</title>
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
     <!-- Toast Notifications Container -->
@@ -12,11 +12,12 @@
 
     <!-- 1. HOME MENU -->
     <div id="menu-screen" class="game-container">
-        <h1>Pick a Game! 🎁</h1>
+        <h1>Happy Birthday! 🎁</h1>
         <p>A special custom gift just for you.</p>
         <div class="menu-buttons">
-            <button onclick="switchScreen('connections-screen')">Play Connections</button>
             <button onclick="switchScreen('wordle-screen')">Play Wordle</button>
+            <button onclick="switchScreen('connections-screen')">Play Connections</button>
+            <button onclick="switchScreen('crossword-screen')">Play Mini Crossword</button>
         </div>
     </div>
 
@@ -28,7 +29,10 @@
         <div id="grid" class="grid"></div>
         <div class="controls">
             <span id="mistakes">Mistakes remaining: ••••</span>
-            <button id="submit-btn" disabled>Submit</button>
+            <div class="button-group"> <!-- Wrapped buttons to keep them together -->
+                <button id="shuffle-btn">Shuffle</button>
+                <button id="submit-btn" disabled>Submit</button>
+            </div>
         </div>
     </div>
 
@@ -41,6 +45,17 @@
         <div id="keyboard" class="keyboard"></div>
     </div>
 
-    <script src="script.js"></script>
+     <!-- CUSTOM CROSSWORD GAME -->
+    <div id="crossword-screen" class="game-container hidden">
+        <button class="back-btn" onclick="switchScreen('menu-screen')">← Menu</button>
+        <h1>Custom Crossword 🧩</h1>
+        <p id="clue-display" class="clue-display">Tap a white square to see its clue!</p>
+        <div id="crossword-grid-5x5" class="crossword-grid-5x5"></div>
+        <div class="crossword-controls">
+            <button id="check-crossword-btn">Check Puzzle</button>
+        </div>
+    </div>
+
+    <script src="script.js?v=fresh"></script>
 </body>
 </html>

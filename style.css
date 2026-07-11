@@ -51,7 +51,7 @@ body {
 .menu-buttons button { width: 100%; padding: 20px; font-size: 18px; }
 
 /* CONNECTIONS */
-.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 20px 0; }
+.grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 20px 0; text-align: center !important; }
 .card {
     background-color: #efefe6;
     padding: 15px 2px;
@@ -66,23 +66,32 @@ body {
     justify-content: center;
     min-height: 45px;
     transition: transform 0.1s ease, background-color 0.2s ease;
-}
-.card.selected { background-color: #5a5a5a; color: white; transform: scale(0.96); }
-.card.solved-0 { background-color: #f9df6d; color: black; animation: popIn 0.4s ease; }
-.card.solved-1 { background-color: #a0c35a; color: black; animation: popIn 0.4s ease; }
-.card.solved-2 { background-color: #b0c4ef; color: black; animation: popIn 0.4s ease; }
-.card.solved-3 { background-color: #ba79b1; color: white; animation: popIn 0.4s ease; }
-/* Forces text to align and justify perfectly to the center when a row is solved */
-.card[style*="grid-column: span 4"] {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    padding: 15px 10px; /* Gives a bit more breathing room on mobile */
     box-sizing: border-box;
 }
+.card.selected { background-color: #5a5a5a; color: white; transform: scale(0.96); }
 
+.button-group {
+    display: flex;
+    gap: 8px; /* Adds clean spacing between Shuffle and Submit */
+}
+
+
+/* EXPLICIT MOBLE BANNER CENTERING FORCING OVERRIDE */
+.card.solved-0, .card.solved-1, .card.solved-2, .card.solved-3 {
+    grid-column: span 4 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+    animation: popIn 0.4s ease;
+}
+.card.solved-0 { background-color: #f9df6d; color: black; }
+.card.solved-1 { background-color: #a0c35a; color: black; }
+.card.solved-2 { background-color: #b0c4ef; color: black; }
+.card.solved-3 { background-color: #ba79b1; color: white; }
 .controls { display: flex; justify-content: space-between; align-items: center; }
 
 /* WORDLE BOARD & ANIMATIONS */
@@ -102,38 +111,103 @@ body {
     box-sizing: border-box;
     background-color: white;
 }
-.wordle-cell.toggled {
-    border-color: #878a8c;
-    animation: popIn 0.1s ease-in-out;
-}
-
-/* Flipping Animation Classes */
+.wordle-cell.toggled { border-color: #878a8c; animation: popIn 0.1s ease-in-out; }
 .wordle-cell.flip { animation: flipTile 0.5s ease-forward; }
 .wordle-cell.correct { background-color: #6aaa64 !important; color: white !important; border-color: #6aaa64 !important; }
 .wordle-cell.present { background-color: #c9b458 !important; color: white !important; border-color: #c9b458 !important; }
 .wordle-cell.absent { background-color: #787c7e !important; color: white !important; border-color: #787c7e !important; }
 
-/* WORDLE KEYBOARD */
-.keyboard { display: flex; flex-direction: column; gap: 6px; margin-top: 20px; user-select: none; }
-.keyboard-row { display: flex; justify-content: center; gap: 4px; }
-.key {
+/* MINI CROSSWORD */
+* CLUE BOARD */
+.clue-display {
     background-color: #e1e3e6;
-    border: 0;
-    padding: 16px 0;
+    padding: 14px;
+    border-radius: 8px;
     font-weight: bold;
-    border-radius: 4px;
-    cursor: pointer;
-    flex: 1;
     font-size: 14px;
-    text-transform: uppercase;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    line-height: 1.4;
 }
-.key.wide { flex: 1.5; font-size: 11px; }
 
-/* GENERAL BUTTONS */
-button { padding: 12px 24px; border-radius: 20px; border: 1px solid #000; background: white; cursor: pointer; font-weight: bold; }
-button:disabled { border-color: #ccc; color: #ccc; cursor: not-allowed; }
 
-/* KEYFRAME DEFINITIONS */
+/* Custom 5x5 Crossword Grid Canvas Engine */
+.crossword-grid-5x5 {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Generates 5 rows and 5 columns */
+    gap: 4px;
+    max-width: 320px; /* Perfectly sized for mobile phone screens */
+    margin: 20px auto;
+}
+
+
+
+.cell-wrapper {
+    position: relative;
+    aspect-ratio: 1;
+    width: 100%;
+    height: 100%;
+}
+.crossword-cell {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    border: 2px solid #333;
+    font-size: 26px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    outline: none;
+    box-sizing: border-box;
+    padding: 0;
+    border-radius: 0;
+}
+.crossword-cell.black-block {
+    background-color: #121213;
+    border-color: #121213;
+    pointer-events: none;
+}
+.crossword-cell.selected-cell {
+    background-color: #b0c4ef;
+}
+.crossword-cell.cw-correct {
+    background-color: #d4edda;
+    border-color: #28a745;
+}
+.crossword-cell.cw-wrong {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+}
+
+/* CORNER GRID NUMBERS */
+.cell-number {
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #555;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.crossword-controls{margin-top: 20px;}
+
+/* CONTROLS BUTTONS */
+button {
+    padding: 12px 30px;
+    border-radius: 20px;
+    border: 1px solid #000;
+    background: white;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+
 @keyframes popIn {
     0% { transform: scale(0.8); opacity: 0.5; }
     40% { transform: scale(1.1); }
@@ -149,4 +223,44 @@ button:disabled { border-color: #ccc; color: #ccc; cursor: not-allowed; }
     0%, 100% { transform: translateX(0); }
     15%, 45%, 75% { transform: translateX(-4px); }
     30%, 60%, 90% { transform: translateX(4px); }
+}
+
+/* ==========================================
+   ⌨️ WORDLE KEYBOARD STYLING BLOCK
+   ========================================== */
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 20px;
+    user-select: none;
+    width: 100%;
+}
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+}
+.key {
+    background-color: #e1e3e6;
+    color: #000000;
+    border: 0;
+    padding: 16px 0;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 1;           /* Forces buttons to shrink proportionally into 1 line */
+    min-width: 0;       /* Prevents text from forcing buttons to widen and break */
+    font-size: 14px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    box-sizing: border-box;
+}
+.key.wide {
+    flex: 1.5;          /* Makes ENTER and DELETE slightly wider than letters */
+    font-size: 11px;
 }
