@@ -2,13 +2,13 @@
 // ⚙️ CUSTOM SETUP - CONFIGURATION HUB
 // ==========================================
 const categories = [
-    { desc: "FAVORITE DESSERTS", words: ["CAKE", "COOKIES", "ICECREAM", "PIE"] },
-    { desc: "PLACES WE VISITED", words: ["PARIS", "TOKYO", "LONDON", "NEWYORK"] },
-    { desc: "DOG BREEDS", words: ["PUG", "LABRADOR", "POODLE", "CORGI"] },
-    { desc: "THINGS THAT ARE BLUE", words: ["SKY", "OCEAN", "JEANS", "BERRY"] }
+    { desc: "PLACES YOU WANT TO GO", words: ["HONOLULU", "ANCHORAGE", "MIAMI", "LAS VEGAS"] },
+    { desc: "PLACES YOU HAVE VACATIONED", words: ["DENVER", "CHARLESTON", "SAVANNAH", "NEWYORK"] },
+    { desc: "FOOD YOU HAD IN NYC", words: ["PIZZA", "BAGELS", "FRIED RICE", "HOT CHOCOLATE"] },
+    { desc: "INDIAN FAVORITES", words: ["PAV BHAJI", "MISAL PAV", "CHAAT", "DOSA"] }
 ];
 
-const SECRET_WORD = "HEART"; // Wordle answer key
+const SECRET_WORD = "PURDUE"; // Wordle answer key
 
 // ==========================================
 // ⚙️ CUSTOM SETUP - 5x5 CROSSWORD DESIGN HUB
@@ -201,7 +201,7 @@ async function reveal_connections() {
 // ==========================================
 let currentAttempt = 0, currentLetter = 0;
 const maxAttempts = 6;
-let wordleGrid = Array(maxAttempts).fill().map(() => Array(5).fill(""));
+let wordleGrid = Array(maxAttempts).fill().map(() => Array(6).fill(""));
 
 function initWordle() {
     const board = document.getElementById("wordle-board");
@@ -210,7 +210,7 @@ function initWordle() {
         const row = document.createElement("div");
         row.className = "wordle-row";
         row.id = `row-${r}`;
-        for (let c = 0; c < 5; c++) {
+        for (let c = 0; c < 6; c++) {
             const cell = document.createElement("div");
             cell.className = "wordle-cell";
             cell.id = `cell-${r}-${c}`;
@@ -256,7 +256,7 @@ function handleKeyPress(key) {
             cell.classList.remove("toggled");
         }
     } else if (key === "ENTER") {
-        if (currentLetter === 5) {
+        if (currentLetter === 6) {
             (async () => {
                 const isValid = await checkWordleRow();
                 if (!isValid){
@@ -271,7 +271,7 @@ function handleKeyPress(key) {
             triggerRowShake();
         }
     } else {
-        if (currentLetter < 5) {
+        if (currentLetter < 6) {
             wordleGrid[currentAttempt][currentLetter] = key;
             const cell = document.getElementById(`cell-${currentAttempt}-${currentLetter}`);
             cell.innerText = key;
@@ -312,7 +312,7 @@ async function checkWordleRow() {
     const guessArr = rowWords.toUpperCase().split("");
     let revealDelay = 200;
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 6; i++) {
         const cell = document.getElementById(`cell-${currentAttempt}-${i}`);
         const letter = guessArr[i];
         
