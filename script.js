@@ -350,7 +350,8 @@ async function checkWordleRow() {
 }
 
 function updateKeyboardKeyColor(letter, targetStatus) {
-    const keyElement = document.getElementById(`key-${letter}`);
+    const upperLetter = letter.toUpperCase();
+    const keyElement = document.getElementById(`key-${upperLetter}`);
     if (!keyElement) return;
     if (keyElement.classList.contains("correct")) return;
     if (keyElement.classList.contains("present") && targetStatus === "absent") return;
