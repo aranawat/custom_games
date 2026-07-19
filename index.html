@@ -45,16 +45,30 @@
         <div id="keyboard" class="keyboard"></div>
     </div>
 
-     <!-- CUSTOM CROSSWORD GAME -->
+    <!-- 4. CUSTOM 10x10 CROSSWORD GAME -->
     <div id="crossword-screen" class="game-container hidden">
         <button class="back-btn" onclick="switchScreen('menu-screen')">← Menu</button>
         <h1>Custom Crossword 🧩</h1>
-        <p id="clue-display" class="clue-display">Tap a white square to see its clue!</p>
-        <div id="crossword-grid-5x5" class="crossword-grid-5x5"></div>
+        
+        <div id="crossword-grid" class="crossword-grid-10x10"></div>
+        
         <div class="crossword-controls">
             <button id="check-crossword-btn">Check Puzzle</button>
         </div>
+
+        <!-- Static Clues Display Columns -->
+        <div class="clues-box-container">
+            <div class="clue-column">
+                <h3>ACROSS</h3>
+                <ul id="across-clues"></ul>
+            </div>
+            <div class="clue-column">
+                <h3>DOWN</h3>
+                <ul id="down-clues"></ul>
+            </div>
+        </div>
     </div>
+
 
     <script src="script.js?v=fresh"></script>
 </body>

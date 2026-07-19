@@ -8,7 +8,6 @@ body {
     margin: 0;
     padding: 10px;
     box-sizing: border-box;
-    touch-action: manipulation;
 }
 .game-container {
     text-align: center;
@@ -23,7 +22,7 @@ body {
     border-radius: 10px;
 }
 
-/* TOAST MESSAGES */
+/* TOAST OVERLAYS */
 .toast-container {
     position: fixed;
     top: 10%;
@@ -46,12 +45,10 @@ body {
     transition: opacity 0.3s ease;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
-
-/* MENU SCREEN */
 .menu-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
 .menu-buttons button { width: 100%; padding: 20px; font-size: 18px; }
 
-/* CONNECTIONS */
+/* CONNECTIONS GRID */
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 20px 0; text-align: center !important; }
 .card {
     background-color: #efefe6;
@@ -70,14 +67,6 @@ body {
     box-sizing: border-box;
 }
 .card.selected { background-color: #5a5a5a; color: white; transform: scale(0.96); }
-
-.button-group {
-    display: flex;
-    gap: 8px; /* Adds clean spacing between Shuffle and Submit */
-}
-
-
-/* EXPLICIT MOBLE BANNER CENTERING FORCING OVERRIDE */
 .card.solved-0, .card.solved-1, .card.solved-2, .card.solved-3 {
     grid-column: span 4 !important;
     display: flex !important;
@@ -94,12 +83,12 @@ body {
 .card.solved-2 { background-color: #b0c4ef; color: black; }
 .card.solved-3 { background-color: #ba79b1; color: white; }
 .controls { display: flex; justify-content: space-between; align-items: center; }
+.button-group { display: flex; gap: 8px; }
 
-/* WORDLE BOARD & ANIMATIONS */
+/* WORDLE BOARD */
 .wordle-board { display: grid; grid-template-rows: repeat(6, 1fr); gap: 5px; max-width: 330px; margin: 20px auto; }
 .wordle-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
 .wordle-row.shake { animation: shakeRow 0.5s ease; }
-
 .wordle-cell {
     aspect-ratio: 1;
     border: 2px solid #d3d6da;
@@ -118,96 +107,140 @@ body {
 .wordle-cell.present { background-color: #c9b458 !important; color: white !important; border-color: #c9b458 !important; }
 .wordle-cell.absent { background-color: #787c7e !important; color: white !important; border-color: #787c7e !important; }
 
-/* MINI CROSSWORD */
-* CLUE BOARD */
-.clue-display {
+/* FIXED WORDLE QWERTY KEYBOARD */
+.keyboard { display: flex; flex-direction: column; gap: 6px; margin-top: 20px; user-select: none; width: 100%; }
+.keyboard-row { display: flex; justify-content: center; gap: 4px; width: 100%; }
+.key {
     background-color: #e1e3e6;
-    padding: 14px;
-    border-radius: 8px;
+    color: #000;
+    border: 0;
+    padding: 16px 0;
     font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
     font-size: 14px;
-    min-height: 45px;
+    text-transform: uppercase;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
-    line-height: 1.4;
+    min-height: 48px;
+    box-sizing: border-box;
+}
+.key.wide { flex: 1.5; font-size: 11px; }
+
+/* Ensure these class names match targetStatus ("correct", "present", "absent") */
+.key.correct {
+    background-color: #6aaa64 !important;
+    color: white !important;
+    border-color: #6aaa64 !important;
+}
+
+.key.present {
+    background-color: #c9b458 !important;
+    color: white !important;
+    border-color: #c9b458 !important;
+}
+
+.key.absent {
+    background-color: #787c7e !important;
+    color: white !important;
+    border-color: #787c7e !important;
 }
 
 
-/* Custom 5x5 Crossword Grid Canvas Engine */
-.crossword-grid-5x5 {
+/* 10x10 CROSSWORD GRID ENGINE */
+.crossword-grid-10x10 {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* Generates 5 rows and 5 columns */
-    gap: 4px;
-    max-width: 320px; /* Perfectly sized for mobile phone screens */
+    grid-template-columns: repeat(10, 1fr);
+    gap: 3px;
+    max-width: 440px;
     margin: 20px auto;
 }
-
-
-
-.cell-wrapper {
+.crossword-cell {
     position: relative;
     aspect-ratio: 1;
     width: 100%;
     height: 100%;
+    background-color: white;
+    box-sizing: border-box;
 }
-.crossword-cell {
+.crossword-cell.black-block {
+    background-color: #121213;
+    pointer-events: none;
+}
+.crossword-cell input {
     width: 100%;
     height: 100%;
-    background-color: white;
-    border: 2px solid #333;
-    font-size: 26px;
-    font-weight: bold;
+    border: 1px solid #333;
     text-align: center;
+    font-size: 14px;
+    font-weight: bold;
     text-transform: uppercase;
     outline: none;
     box-sizing: border-box;
     padding: 0;
     border-radius: 0;
+    z-index: 1;
+    position: relative;
+    background: transparent;
 }
-.crossword-cell.black-block {
-    background-color: #121213;
-    border-color: #121213;
-    pointer-events: none;
+.crossword-cell input:focus {
+    background-color: #b0c4ef !important;
 }
-.crossword-cell.selected-cell {
-    background-color: #b0c4ef;
-}
-.crossword-cell.cw-correct {
-    background-color: #d4edda;
-    border-color: #28a745;
-}
-.crossword-cell.cw-wrong {
-    background-color: #f8d7da;
-    border-color: #dc3545;
-}
-
-/* CORNER GRID NUMBERS */
 .cell-number {
     position: absolute;
-    top: 3px;
-    left: 5px;
-    font-size: 11px;
+    top: 1px;
+    left: 2px;
+    font-size: 8px;
     font-weight: bold;
-    color: #555;
+    color: #444;
     z-index: 10;
     pointer-events: none;
 }
 
-.crossword-controls{margin-top: 20px;}
+/* INPUT CORRECTION CHECK COLORS */
+.correct-cell { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724 !important; }
+.incorrect-cell { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24 !important; }
 
-/* CONTROLS BUTTONS */
-button {
-    padding: 12px 30px;
-    border-radius: 20px;
-    border: 1px solid #000;
-    background: white;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 15px;
+/* SIDE-BY-SIDE CLUE COLUMNS CONTAINER */
+.clues-box-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 25px;
+    text-align: left;
+}
+.clue-column {
+    flex: 1;
+    background-color: #f1f3f5;
+    padding: 12px;
+    border-radius: 6px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+.clue-column h3 {
+    margin-top: 0;
+    font-size: 14px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 4px;
+    letter-spacing: 1px;
+}
+.clue-column ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+}
+.clue-column li {
+    margin-bottom: 8px;
 }
 
+/* GENERAL CONTROL BUTTONS */
+button { padding: 12px 24px; border-radius: 20px; border: 1px solid #000; background: white; cursor: pointer; font-weight: bold; }
+button:disabled { border-color: #ccc; color: #ccc; cursor: not-allowed; }
 
 @keyframes popIn {
     0% { transform: scale(0.8); opacity: 0.5; }
@@ -225,60 +258,3 @@ button {
     15%, 45%, 75% { transform: translateX(-4px); }
     30%, 60%, 90% { transform: translateX(4px); }
 }
-
-/* ==========================================
-   ⌨️ WORDLE KEYBOARD STYLING BLOCK
-   ========================================== */
-.keyboard {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 20px;
-    user-select: none;
-    width: 100%;
-}
-.keyboard-row {
-    display: flex;
-    justify-content: center;
-    gap: 4px;
-    width: 100%;
-}
-.key {
-    background-color: #e1e3e6;
-    color: #000000;
-    border: 0;
-    padding: 16px 0;
-    font-weight: bold;
-    border-radius: 4px;
-    cursor: pointer;
-    flex: 1;           /* Forces buttons to shrink proportionally into 1 line */
-    min-width: 0;       /* Prevents text from forcing buttons to widen and break */
-    font-size: 14px;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    box-sizing: border-box;
-}
-.key.wide {
-    flex: 1.5;          /* Makes ENTER and DELETE slightly wider than letters */
-    font-size: 11px;
-}
-
-/* Standard Wordle Color Scheme */
-.key.correct {
-    background-color: #6aaa64 !important;
-    color: white !important;
-}
-
-.key.present {
-    background-color: #c9b458 !important;
-    color: white !important;
-}
-
-.key.absent {
-    background-color: #787c7e !important;
-    color: white !important;
-}
-

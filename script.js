@@ -15,21 +15,31 @@ const SECRET_WORD = "PURDUE"; // Wordle answer key
 // ==========================================
 // The Solution Map: Interlocks HELLO, HEART, LUNCH, and TRUCK
 // Custom 5x5 Crossword Blueprint Solutions
-const CROSSWORD_SOLUTION = [
-    ['H', 'E', 'L', 'L', 'O'],
-    ['E', 'X', 'U', 'X', 'X'],
-    ['A', 'X', 'N', 'X', 'X'],
-    ['R', 'X', 'C', 'X', 'X'],
-    ['T', 'R', 'U', 'C', 'K']
+const crosswordGridSolution  = [
+    ['C', 'O', 'D', 'I', 'N', 'G', '.', 'J', 'A', 'M'],
+    ['L', '.', '.', 'C', '.', 'R', '.', 'A', '.', 'O'],
+    ['I', 'N', 'P', 'U', 'T', 'I', 'N', 'G', '.', 'U'],
+    ['C', '.', '.', 'B', '.', 'D', '.', 'U', '.', 'S'],
+    ['K', 'E', 'Y', 'B', 'O', 'A', 'R', 'D', '.', 'E'],
+    ['.', '.', '.', 'E', '.', 'G', '.', '.', '.', '.'],
+    ['S', 'C', 'R', 'E', 'E', 'N', '.', 'B', 'I', 'T'],
+    ['H', '.', '.', '.', '.', 'I', '.', 'Y', '.', 'E'],
+    ['I', 'N', 'T', 'E', 'R', 'N', 'E', 'T', '.', 'X'],
+    ['F', '.', '.', '.', '.', 'G', '.', 'E', '.', 'T']
 ];
 
 // 🎯 COMPLETELY FIXED MATRIX: Every row has explicit column integers
 const CROSSWORD_NUMBERS_RAW = [
-    "1, 2, 3, 0, 0",
-    "4, 0, 0, 0, 0",
-    "0, 0, 0, 0, 0",
-    "0, 0, 0, 0, 0",
-    "5, 0, 0, 0, 0"
+    "1, 2, 3, 0, 0, 0, 0, 0, 0, 0",
+    "4, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+    "0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+    "0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+    "5, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+    "0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+    "4, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+    "0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+    "0, 0, 0, 0, 0, 0, 0, 0, 0, 0",
+    "5, 0, 0, 0, 0, 0, 0, 0, 0, 0"
 ];
 
 // Convert the safe string strings back into an executable grid layout object instantly
@@ -38,12 +48,26 @@ const CROSSWORD_NUMBERS = CROSSWORD_NUMBERS_RAW.map(rowStr =>
 );
 
 // Clue strings mapped cleanly to coordinates
-const CROSSWORD_CLUES = {
-    "1-Across": "A standard greeting or friendly welcome 👋",
-    "5-Across": "Large vehicle used for carrying heavy cargo 🚚",
-    "1-Down": "The symbol of love, or the answer to our Wordle game! ❤️",
-    "2-Down": "Midday meal eaten between breakfast and dinner 🥪",
-    "3-Down": "Midday meal eaten between breakfast and dinner 🥪" // Shared tracking coordinate
+const crosswordClues  = {
+    across: [
+        { number: 1, row: 0, col: 0, text: "Writing software instructions." },
+        { number: 5, row: 0, col: 7, text: "Fruit preserve or stuck traffic." },
+        { number: 6, row: 2, col: 0, text: "Entering data into a computer." },
+        { number: 7, row: 4, col: 0, text: "Peripheral used for typing." },
+        { number: 8, row: 6, col: 0, text: "Monitor display panel." },
+        { number: 9, row: 6, col: 7, text: "Smallest unit of digital data." },
+        { number: 10, row: 8, col: 0, text: "The World Wide Web." },
+        { number: 12, row: 8, col: 9, text: "Unformatted text file layout extension." }
+    ],
+    down: [
+        { number: 1, row: 0, col: 0, text: "Pressing a mouse button." },
+        { number: 2, row: 0, col: 3, text: "Small graphic file or desktop shortcut." },
+        { number: 3, row: 0, col: 5, text: "Line drawing or chart visualization." },
+        { number: 4, row: 0, col: 7, text: "High-level programming language named after coffee." },
+        { number: 5, row: 0, col: 9, text: "Handheld peripheral indicator controller." },
+        { number: 11, row: 6, col: 0, text: "Keyboard modifier key for capitalizing letters." },
+        { number: 13, row: 6, col: 7, text: "Binary unit containing 8 bits." }
+    ]
 };
 
 
@@ -365,118 +389,132 @@ function updateKeyboardKeyColor(letter, targetStatus) {
 // 🧭 MINI CROSSWORD MODULE
 // ==========================================
 function initCrossword() {
-    // Target the new 5x5 grid container element
-    const container = document.getElementById("crossword-grid-5x5");
-    container.innerHTML = "";
+    const gridElement = document.getElementById("crossword-grid");
+    const acrossContainer = document.getElementById("across-clues");
+    const downContainer = document.getElementById("down-clues");
+    
+    // Safety exit check if container IDs are wrong
+    if (!gridElement || !acrossContainer || !downContainer) return;
+    
+    gridElement.innerHTML = "";
+    acrossContainer.innerHTML = "";
+    downContainer.innerHTML = "";
 
-    // Run loops to calculate a complete 5x5 coordinate footprint (25 tiles total)
-    for (let r = 0; r < 5; r++) {
-        for (let c = 0; c < 5; c++) {
-            const wrapper = document.createElement("div");
-            wrapper.className = "cell-wrapper";
-            wrapper.style.position = "relative";
-            wrapper.style.width = "100%";
-            wrapper.style.height = "100%";
-
-            if (CROSSWORD_SOLUTION[r][c] === 'X') {
-                const block = document.createElement("div");
-                block.className = "crossword-cell black-block";
-                wrapper.appendChild(block);
+    // 1. Build & Draw the 10x10 Grid Board Layout
+    for (let r = 0; r < 10; r++) {
+        for (let c = 0; c < 10; c++) {
+            const cellValue = crosswordGridSolution[r][c];
+            const cell = document.createElement("div");
+            cell.className = "crossword-cell";
+            
+            if (cellValue === '.') {
+                cell.classList.add("black-block");
             } else {
                 const input = document.createElement("input");
-                input.className = "crossword-cell";
                 input.type = "text";
                 input.maxLength = 1;
-                input.id = `cw-${r}-${c}`;
-                input.style.width = "100%";
-                input.style.height = "100%";
-                input.style.zIndex = "1";
-
-                // Autocomplete/History Blockers
+                input.dataset.row = r;
+                input.dataset.col = c;
+                input.id = `cell-${r}-${c}`;
+                
+                // Form History Popup Protection Shields
                 input.setAttribute("autocomplete", "off");
                 input.setAttribute("autocorrect", "off");
                 input.setAttribute("autocapitalize", "off");
                 input.setAttribute("spellcheck", "false");
-
-                if (CROSSWORD_NUMBERS[r][c] !== 0) {
-                    const numLabel = document.createElement("span");
-                    numLabel.className = "cell-number";
-                    numLabel.innerText = CROSSWORD_NUMBERS[r][c];
-                    wrapper.appendChild(numLabel);
-                }
-
-                input.addEventListener("focus", () => {
-                    document.querySelectorAll(".crossword-cell").forEach(el => el.classList.remove("selected-cell"));
-                    input.classList.add("selected-cell");
-                    updateCrosswordClueDisplay(r, c);
-                });
-
-                input.addEventListener("input", () => {
-                    input.value = input.value.toUpperCase();
-                    // Auto-advance cursor rightwards if next tile isn't blocked
-                    if (input.value && c < 4 && CROSSWORD_SOLUTION[r][c+1] !== 'X') {
-                        document.getElementById(`cw-${r}-${c+1}`)?.focus();
+                
+                // Advance typing cursor forward to the right automatically on key entry
+                input.addEventListener("input", (e) => {
+                    input.classList.remove("correct-cell", "incorrect-cell");
+                    input.value = input.value.toUpperCase(); // Force letters uppercase
+                    
+                    if (e.target.value && c < 9 && crosswordGridSolution[r][c + 1] !== '.') {
+                        const nextCell = document.getElementById(`cell-${r}-${c + 1}`);
+                        if (nextCell) nextCell.focus();
                     }
                 });
 
-                wrapper.appendChild(input);
+                cell.appendChild(input);
             }
-            container.appendChild(wrapper);
+            gridElement.appendChild(cell);
         }
     }
-    document.getElementById("check-crossword-btn").onclick = evaluateCrosswordPuzzle;
-}
 
-function updateCrosswordClueDisplay(r, c) {
-    const clueDisplay = document.getElementById("clue-display");
-    let cluesFound = [];
-
-    // 1. Across Clues row position checking boundaries
-    if (r === 0) cluesFound.push(`🧩 1-Across: ${CROSSWORD_CLUES["1-Across"]}`);
-    if (r === 4) cluesFound.push(`🧩 5-Across: ${CROSSWORD_CLUES["5-Across"]}`);
-    
-    // 2. Down Clues column position checking boundaries
-    if (c === 0) cluesFound.push(`🧩 1-Down: ${CROSSWORD_CLUES["1-Down"]}`);
-    if (c === 1 && r === 4) cluesFound.push(`🧩 5-Across: ${CROSSWORD_CLUES["5-Across"]}`); // Cross intersection tracker
-    if (c === 2) cluesFound.push(`🧩 2-Down: ${CROSSWORD_CLUES["2-Down"]}`);
-
-    if (cluesFound.length > 0) {
-        clueDisplay.innerHTML = cluesFound.join("<br><br>");
-    } else {
-        clueDisplay.innerText = "Tap a valid letter box square!";
-    }
-}
-
-function evaluateCrosswordPuzzle() {
-    let allCorrect = true;
-    let missingInputs = false;
-
-    // Check all 25 grid slots
-    for (let r = 0; r < 5; r++) {
-        for (let c = 0; c < 5; c++) {
-            if (CROSSWORD_SOLUTION[r][c] !== 'X') {
-                const cell = document.getElementById(`cw-${r}-${c}`);
-                const value = cell.value.trim().toUpperCase();
-
-                cell.classList.remove("cw-correct", "cw-wrong");
-
-                if (!value) {
-                    missingInputs = true;
-                    allCorrect = false;
-                } else if (value === CROSSWORD_SOLUTION[r][c]) {
-                    cell.classList.add("cw-correct");
-                } else {
-                    cell.classList.add("cw-wrong");
-                    allCorrect = false;
+    // 2. Map Starting Micro Numbers into the Grid Cells
+    const assignNumbers = (clueList) => {
+        clueList.forEach(clue => {
+            const cellInput = document.getElementById(`cell-${clue.row}-${clue.col}`);
+            if (cellInput) {
+                const cellParent = cellInput.parentElement;
+                // Avoid duplicating if a square has both an Across and a Down clue start
+                if (!cellParent.querySelector(".cell-number")) {
+                    const numSpan = document.createElement("span");
+                    numSpan.className = "cell-number";
+                    numSpan.innerText = clue.number;
+                    cellParent.appendChild(numSpan);
                 }
             }
-        }
-    }
+        });
+    };
+    assignNumbers(crosswordClues.across);
+    assignNumbers(crosswordClues.down);
 
-    if (missingInputs) showToast("Fill in all the squares!");
-    else if (allCorrect) showToast("🎉 Incredible! Custom Crossword Solved!");
-    else showToast("❌ Some letters are incorrect.");
+    // 3. Render Clue Text lists onto column UI buckets
+    crosswordClues.across.forEach(c => {
+        acrossContainer.innerHTML += `<li><strong>${c.number}.</strong> ${c.text}</li>`;
+    });
+    crosswordClues.down.forEach(c => {
+        downContainer.innerHTML += `<li><strong>${c.number}.</strong> ${c.text}</li>`;
+    });
+
+    // 4. Hook up Verification Check Logic Engine Trigger
+    const checkBtn = document.getElementById("check-crossword-btn");
+    if (checkBtn) {
+        checkBtn.onclick = checkCrosswordPuzzle;
+    }
 }
+
+// ==========================================
+// 🎛️ CROSSWORD VERIFICATION HANDLER
+// ==========================================
+function checkCrosswordPuzzle() {
+    const inputs = document.querySelectorAll(".crossword-cell input");
+    let missingInputs = false;
+    let totalCorrect = 0;
+    let totalExpected = inputs.length;
+    
+    inputs.forEach(input => {
+        const r = parseInt(input.dataset.row);
+        const c = parseInt(input.dataset.col);
+        const solutionLetter = crosswordGridSolution[r][c];
+        const userLetter = input.value.trim().toUpperCase();
+
+        input.classList.remove("correct-cell", "incorrect-cell");
+
+        if (userLetter === "") {
+            missingInputs = true;
+            return; // Leave empty inputs uncolored, skip checking further metrics for this tile
+        }
+
+        if (userLetter === solutionLetter) {
+            input.classList.add("correct-cell");
+            totalCorrect++;
+        } else {
+            input.classList.add("incorrect-cell");
+        }
+    });
+
+    // Trigger toast banners based on calculation states
+    if (missingInputs) {
+        showToast("Fill in all the squares!");
+    } else if (totalCorrect === totalExpected) {
+        showToast("🎉 Incredible! 10x10 Puzzle Solved!");
+    } else {
+        showToast("❌ Some letters are incorrect.");
+    }
+}
+
+
 
 
 // Global initialization triggers
